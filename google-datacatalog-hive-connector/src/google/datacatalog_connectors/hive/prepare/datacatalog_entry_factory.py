@@ -143,4 +143,6 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
         formatted_name = source_name.replace('&', '_')
         formatted_name = formatted_name.replace(':', '_')
         formatted_name = formatted_name.replace('/', '_')
-        return formatted_name
+        # truncate the name for the column type to comply with the 128 bytes limitation
+        truncated_name = formatted_name[:128]
+        return truncated_name
