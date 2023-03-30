@@ -111,4 +111,6 @@ venv.bak/
 # Application logs
 log/
 
+# Specific project folder or files
 instructions.txt
+/venv-3.8/
