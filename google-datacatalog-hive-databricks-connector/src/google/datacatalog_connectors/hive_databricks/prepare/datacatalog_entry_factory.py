@@ -97,12 +97,23 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
 
         columns = []
         for column in table_storage.columns:
-            columns.append(
-                datacatalog.ColumnSchema(
-                    column=column.name,
-                    type=DataCatalogEntryFactory.__format_entry_column_type(
-                        column.type),
-                    description=column.comment))
+            if column.name == "col":
+                fields = __extract_spark_schema(table_metadata)
+                for f in fields:
+                    columns.append(
+                        datacatalog.ColumnSchema(
+                            column=f.get('name'),
+                            type=DataCatalogEntryFactory.__format_entry_column_type(
+                                f.get('type')),
+                            description=''))
+                break
+            else:
+                columns.append(
+                    datacatalog.ColumnSchema(
+                        column=column.name,
+                        type=DataCatalogEntryFactory.__format_entry_column_type(
+                            column.type),
+                        description=column.comment))
         entry.schema.columns.extend(columns)
 
         return entry_id, entry
@@ -146,3 +157,18 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
         # truncate the name for the column type to comply with the 128 bytes limitation
         truncated_name = formatted_name[:128]
         return truncated_name
+
+    @staticmethod
+    def __extract_spark_schema(table_metadata):
+        try:
+            sprk_schema_json = ""
+            param = next([
+                param for param in table_metadata.table_params
+                if param.param_key == 'spark.sql.source.schema':
+                    sprk_schema_json = sprk_schema_json + param.param_value
+                elif 'spark.sql.source.schema.part.' in param.param_key:
+                    sprk_schema_json = sprk_schema_json + param.param_value
+            ].__iter__())
+            return json.loads(sprk_schema_json).get('fields')
+        except StopIteration:
+            return None
