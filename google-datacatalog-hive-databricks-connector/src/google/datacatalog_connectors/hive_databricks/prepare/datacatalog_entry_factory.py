@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 from google.cloud import datacatalog
 from google.protobuf import timestamp_pb2
 
@@ -98,7 +99,7 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
         columns = []
         for column in table_storage.columns:
             if column.name == "col":
-                fields = __extract_spark_schema(table_metadata)
+                fields = self.__extract_spark_schema(table_metadata)
                 for f in fields:
                     columns.append(
                         datacatalog.ColumnSchema(
@@ -160,15 +161,14 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
 
     @staticmethod
     def __extract_spark_schema(table_metadata):
+        spark_schema_json = ""
         try:
-            sprk_schema_json = ""
-            param = next([
-                param for param in table_metadata.table_params
-                if param.param_key == 'spark.sql.source.schema':
-                    sprk_schema_json = sprk_schema_json + param.param_value
-                elif 'spark.sql.source.schema.part.' in param.param_key:
-                    sprk_schema_json = sprk_schema_json + param.param_value
-            ].__iter__())
-            return json.loads(sprk_schema_json).get('fields')
-        except StopIteration:
-            return None
+            for param in table_metadata.table_params:
+                if param.param_key == 'spark.sql.sources.schema':
+                    spark_schema_json = spark_schema_json + param.param_value
+                elif 'spark.sql.sources.schema.part.' in param.param_key:
+                    spark_schema_json = spark_schema_json + param.param_value
+            return json.loads(spark_schema_json).get('fields')
+        except Exception as ex:
+            print(ex)
+            return spark_schema_json
