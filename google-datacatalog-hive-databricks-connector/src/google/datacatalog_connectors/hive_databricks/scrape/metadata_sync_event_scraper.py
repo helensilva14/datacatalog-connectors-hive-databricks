@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from google.datacatalog_connectors.hive import entities
-from google.datacatalog_connectors.hive.entities import sync_event
+from google.datacatalog_connectors.hive_databricks import entities
+from google.datacatalog_connectors.hive_databricks.entities import sync_event
 
 
 class MetadataSyncEventScraper:

@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from google.datacatalog_connectors.hive.entities import base, table_storage
+from google.datacatalog_connectors.hive_databricks.entities import base, table_storage
 import sqlalchemy
 
 

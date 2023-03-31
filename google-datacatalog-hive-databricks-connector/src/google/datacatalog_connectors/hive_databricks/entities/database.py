@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from google.datacatalog_connectors.hive.entities import base
+from google.datacatalog_connectors.hive_databricks.entities import base
 import sqlalchemy
 from sqlalchemy.orm import relationship
 
