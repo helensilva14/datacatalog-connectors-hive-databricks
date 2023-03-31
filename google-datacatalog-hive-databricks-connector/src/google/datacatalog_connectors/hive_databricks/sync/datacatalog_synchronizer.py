@@ -24,9 +24,9 @@ from google.datacatalog_connectors.commons.ingest \
     import datacatalog_metadata_ingestor
 from google.datacatalog_connectors.commons.monitoring \
     import metrics_processor
-from google.datacatalog_connectors.hive import entities
-from google.datacatalog_connectors.hive import scrape
-from google.datacatalog_connectors.hive.prepare import \
+from google.datacatalog_connectors.hive_databricks import entities
+from google.datacatalog_connectors.hive_databricks import scrape
+from google.datacatalog_connectors.hive_databricks.prepare import \
     assembled_entry_factory
 
 

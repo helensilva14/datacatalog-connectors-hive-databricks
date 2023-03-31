@@ -17,7 +17,7 @@
 from contextlib import contextmanager
 import logging
 
-from google.datacatalog_connectors.hive import entities
+from google.datacatalog_connectors.hive_databricks import entities
 from sqlalchemy import create_engine, exc
 from sqlalchemy.orm import subqueryload, sessionmaker
 

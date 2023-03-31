@@ -105,7 +105,7 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
                         datacatalog.ColumnSchema(
                             column=f.get('name'),
                             type=DataCatalogEntryFactory.__format_entry_column_type(
-                                f.get('type')),
+                                str(f.get('type'))),
                             description=''))
                 break
             else:

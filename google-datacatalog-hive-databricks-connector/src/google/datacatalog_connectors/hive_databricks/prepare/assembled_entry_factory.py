@@ -18,7 +18,7 @@ import logging
 
 from google.datacatalog_connectors.commons import prepare
 
-from google.datacatalog_connectors.hive.prepare import\
+from google.datacatalog_connectors.hive_databricks.prepare import\
     datacatalog_entry_factory
 
 
