@@ -15,12 +15,10 @@
 # limitations under the License.
 
 import json
-from google.cloud import datacatalog
-from google.protobuf import timestamp_pb2
-from google.protobuf.json_format import ParseDict
 
+from google.cloud import datacatalog_v1beta1 as datacatalog
 from google.datacatalog_connectors.commons.prepare import base_entry_factory
-from google.cloud import datacatalog_v1beta1
+from google.protobuf import timestamp_pb2
 
 
 class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
@@ -99,35 +97,33 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
             entry.source_system_timestamps.update_time = created_timestamp
 
         columns = []
+        schema = datacatalog.types.Schema()
         for column in table_storage.columns:
             if column.type == "array<string>":
-                print("building schema from spark schema")
                 fields = self.__extract_spark_schema(table_metadata)
                 for f in fields:
-                    entry.schema.columns.append(
-                        datacatalog.ColumnSchema(
+                    columns.append(
+                        datacatalog.types.ColumnSchema(
                             column=DataCatalogEntryFactory.__format_entry_column_name(
                                 f.get('name')
                             ),
                             type=DataCatalogEntryFactory.__format_entry_column_type(
-                                #ParseDict(f.get('type'), datacatalog.ColumnSchema.type, ignore_unknown_fields=True)
                                 str(f.get('type'))
                             ),
                             description=" ")
                     )
                 break
             else:
-                print("building schema from HMS")
-                entry.schema.columns.append(
-                    datacatalog.ColumnSchema(
+                columns.append(
+                    datacatalog.types.ColumnSchema(
                         column=DataCatalogEntryFactory.__format_entry_column_name(
                             column.name),
                         type=DataCatalogEntryFactory.__format_entry_column_type(
                             column.type),
                         description=column.comment)
                 )
-        print(columns)
-        # entry.schema.columns.extend(columns)
+        schema.columns = columns
+        entry.schema = schema
 
         return entry_id, entry
 
