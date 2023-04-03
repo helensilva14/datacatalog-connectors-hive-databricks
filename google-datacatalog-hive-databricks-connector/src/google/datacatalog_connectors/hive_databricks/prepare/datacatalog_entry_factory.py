@@ -17,8 +17,10 @@
 import json
 from google.cloud import datacatalog
 from google.protobuf import timestamp_pb2
+from google.protobuf.json_format import ParseDict
 
 from google.datacatalog_connectors.commons.prepare import base_entry_factory
+from google.cloud import datacatalog_v1beta1
 
 
 class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
@@ -87,7 +89,7 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
 
         update_time_seconds = \
             DataCatalogEntryFactory. \
-            __extract_update_time_from_table_metadata(table_metadata)
+                __extract_update_time_from_table_metadata(table_metadata)
         if update_time_seconds is not None:
             updated_timestamp = timestamp_pb2.Timestamp()
             updated_timestamp.FromSeconds(update_time_seconds)
@@ -102,25 +104,30 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
                 print("building schema from spark schema")
                 fields = self.__extract_spark_schema(table_metadata)
                 for f in fields:
-                    columns.append(
+                    entry.schema.columns.append(
                         datacatalog.ColumnSchema(
                             column=DataCatalogEntryFactory.__format_entry_column_name(
-                                f.get('name')),
+                                f.get('name')
+                            ),
                             type=DataCatalogEntryFactory.__format_entry_column_type(
-                                str(f.get('type'))),
-                            description=''))
+                                #ParseDict(f.get('type'), datacatalog.ColumnSchema.type, ignore_unknown_fields=True)
+                                str(f.get('type'))
+                            ),
+                            description=" ")
+                    )
                 break
             else:
                 print("building schema from HMS")
-                columns.append(
+                entry.schema.columns.append(
                     datacatalog.ColumnSchema(
                         column=DataCatalogEntryFactory.__format_entry_column_name(
                             column.name),
                         type=DataCatalogEntryFactory.__format_entry_column_type(
                             column.type),
-                        description=column.comment))
+                        description=column.comment)
+                )
         print(columns)
-        entry.schema.columns.extend(columns)
+        # entry.schema.columns.extend(columns)
 
         return entry_id, entry
 
@@ -148,9 +155,9 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
     def __extract_update_time_from_table_metadata(table_metadata):
         try:
             param = next([
-                param for param in table_metadata.table_params
-                if param.param_key == 'last_modified_time'
-            ].__iter__())
+                             param for param in table_metadata.table_params
+                             if param.param_key == 'last_modified_time'
+                         ].__iter__())
             return int(param.param_value)
         except StopIteration:
             return None

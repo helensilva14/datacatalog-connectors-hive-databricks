@@ -39,6 +39,7 @@ class DataCatalogSynchronizer:
     def __init__(self,
                  project_id,
                  location_id,
+                 entry_group_id="hive",
                  hive_metastore_db_host=None,
                  hive_metastore_db_user=None,
                  hive_metastore_db_pass=None,
@@ -46,7 +47,7 @@ class DataCatalogSynchronizer:
                  hive_metastore_db_type=None,
                  metadata_sync_event=None,
                  enable_monitoring=None):
-        self.__entry_group_id = 'hive'
+        self.__entry_group_id = entry_group_id
         self.__project_id = project_id
         self.__location_id = location_id
         self.__hive_metastore_db_host = hive_metastore_db_host
