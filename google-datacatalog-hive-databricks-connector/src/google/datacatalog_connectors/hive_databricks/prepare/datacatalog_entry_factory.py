@@ -20,6 +20,8 @@ from google.cloud import datacatalog_v1beta1 as datacatalog
 from google.datacatalog_connectors.commons.prepare import base_entry_factory
 from google.protobuf import timestamp_pb2
 
+HIVE_METASTORE = 'HIVE_METASTORE'
+
 
 class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
     __ENTRY_ID_INVALID_CHARS_REGEX_PATTERN = r'[^a-zA-Z0-9_]+'
@@ -64,8 +66,8 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
 
         entry = datacatalog.Entry()
 
-        entry.user_specified_type = 'table'
-        entry.user_specified_system = 'hive'
+        entry.user_specified_type = table_metadata.type
+        entry.user_specified_system = HIVE_METASTORE
 
         entry.display_name = self._format_display_name(table_metadata.name)
 
