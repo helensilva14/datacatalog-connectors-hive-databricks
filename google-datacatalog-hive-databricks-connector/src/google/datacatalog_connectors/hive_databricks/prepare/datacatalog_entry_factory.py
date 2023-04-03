@@ -103,7 +103,8 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
                 for f in fields:
                     columns.append(
                         datacatalog.ColumnSchema(
-                            column=f.get('name'),
+                            column=DataCatalogEntryFactory.__format_entry_column_name(
+                                f.get('name')),
                             type=DataCatalogEntryFactory.__format_entry_column_type(
                                 str(f.get('type'))),
                             description=''))
@@ -111,7 +112,8 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
             else:
                 columns.append(
                     datacatalog.ColumnSchema(
-                        column=column.name,
+                        column=DataCatalogEntryFactory.__format_entry_column_name(
+                            column.name),
                         type=DataCatalogEntryFactory.__format_entry_column_type(
                             column.type),
                         description=column.comment))
@@ -172,3 +174,13 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
         except Exception as ex:
             print(ex)
             return spark_schema_json
+
+    @staticmethod
+    def __format_entry_column_name(source_name):
+        formatted_name = source_name.replace('&', '_')
+        formatted_name = formatted_name.replace(':', '_')
+        formatted_name = formatted_name.replace('/', '_')
+        formatted_name = formatted_name.replace('.', '_')
+        # truncate the name for the column type to comply with the 128 bytes limitation
+        truncated_name = formatted_name[:128]
+        return truncated_name
