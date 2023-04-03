@@ -98,7 +98,8 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
 
         columns = []
         for column in table_storage.columns:
-            if column.name == "col":
+            if column.type == "array<string>":
+                print("building schema from spark schema")
                 fields = self.__extract_spark_schema(table_metadata)
                 for f in fields:
                     columns.append(
@@ -110,6 +111,7 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
                             description=''))
                 break
             else:
+                print("building schema from HMS")
                 columns.append(
                     datacatalog.ColumnSchema(
                         column=DataCatalogEntryFactory.__format_entry_column_name(
@@ -117,6 +119,7 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
                         type=DataCatalogEntryFactory.__format_entry_column_type(
                             column.type),
                         description=column.comment))
+        print(columns)
         entry.schema.columns.extend(columns)
 
         return entry_id, entry
