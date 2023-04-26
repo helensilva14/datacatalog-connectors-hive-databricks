@@ -23,7 +23,7 @@ with open('README.md') as readme_file:
 
 setuptools.setup(
     name='google-datacatalog-hive-databricks-connector',
-    version='0.0.8',
+    version='0.0.9',
     author='Google LLC',
     description=
     'Library for ingesting Hive metadata from Databricks into Google Cloud Data Catalog',
