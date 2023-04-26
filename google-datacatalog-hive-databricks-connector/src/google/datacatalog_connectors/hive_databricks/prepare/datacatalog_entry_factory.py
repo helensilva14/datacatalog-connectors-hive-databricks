@@ -111,8 +111,8 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
                             ),
                             type=DataCatalogEntryFactory.__format_entry_column_type(
                                 str(f.get('type'))
-                            ),
-                            description=" ")
+                            )
+                        )
                     )
                 break
             else:
@@ -121,8 +121,8 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
                         column=DataCatalogEntryFactory.__format_entry_column_name(
                             column.name),
                         type=DataCatalogEntryFactory.__format_entry_column_type(
-                            column.type),
-                        description=column.comment)
+                            column.type)
+                    )
                 )
         schema.columns = columns
         entry.schema = schema
