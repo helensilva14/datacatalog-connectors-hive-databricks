@@ -32,6 +32,26 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
         self.__location_id = location_id
         self.__metadata_host_server = metadata_host_server
         self.__entry_group_id = entry_group_id
+        self.__datacatalog = datacatalog.DataCatalogClient()
+
+    def get_entry_by_name(self, name):
+        """Retrieves Data Catalog Entry.
+        :param name: The Entry name.
+        :return: An Entry object if it exists.
+        """
+        return self.__datacatalog.get_entry(name=name)
+
+    @staticmethod
+    def fill_column_description(entry, persisted_entry):
+
+        columns = []
+        dic = {col.column: col.description for col in persisted_entry.schema.columns}
+        for col in entry.schema.columns:
+            if dic.get(col.column):
+                col.description = dic.get(col.column)
+            columns.append(col)
+        entry.schema.columns = columns
+        return entry
 
     def make_entries_for_database(self, database_metadata):
         entry_id = self._format_id_with_hashing(
@@ -126,6 +146,9 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
                 )
         schema.columns = columns
         entry.schema = schema
+
+        persisted_entry = self.get_entry_by_name(entry.name)
+        entry = self.fill_column_description(entry, persisted_entry)
 
         return entry_id, entry
 
