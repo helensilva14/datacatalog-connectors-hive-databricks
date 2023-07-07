@@ -147,8 +147,17 @@ class DataCatalogEntryFactory(base_entry_factory.BaseEntryFactory):
         schema.columns = columns
         entry.schema = schema
 
-        persisted_entry = self.get_entry_by_name(entry.name)
-        entry = self.fill_column_description(entry, persisted_entry)
+        try:
+            persisted_entry = self.get_entry_by_name(
+                entry.name
+            )
+
+            entry = self.fill_column_description(
+                entry,
+                persisted_entry
+            )
+        except:
+            pass
 
         return entry_id, entry
 
