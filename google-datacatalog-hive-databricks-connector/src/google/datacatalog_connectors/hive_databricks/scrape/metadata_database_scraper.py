@@ -24,7 +24,7 @@ from sqlalchemy.orm import subqueryload, sessionmaker
 
 class MetadataDatabaseScraper:
     CONNECTION_POOL_SIZE = 20
-    DATABASES_PER_PAGE = 5
+    DATABASES_PER_PAGE = 1000
     INITIAL_PAGE_NUMBER = 1
 
     def __init__(self, hive_metastore_db_host, hive_metastore_db_user,
